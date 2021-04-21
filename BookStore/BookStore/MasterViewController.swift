@@ -7,14 +7,14 @@
 
 import UIKit
 
-class MasterViewController: UIViewController, UITableViewDelegate, UITableViewDataSource
- {
+class MasterViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, BookStoreDelegate
+{
     
     var detailViewController : DetailViewController? = nil
     @IBOutlet weak var tableView: UITableView!
     var myBookStore = BookStore()
     
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
@@ -43,11 +43,45 @@ class MasterViewController: UIViewController, UITableViewDelegate, UITableViewDa
                     let selectedBook : Book = myBookStore.bookList[indexPath.row]
                     let controller = (segue.destination as! DetailViewController)
                     controller.detailItem = selectedBook
+                    controller.delegate = self
                 }
+               
             }
+            else if segue.identifier == "AddBookSegue" {
+                let controller = (segue.destination as! AddViewController)
+                controller.delegate = self
+            }
+            
         }
 
+    func newBook(_ controller: AnyObject, newBook: Book){
+        print("Holaa")
+        myBookStore.bookList.append(newBook)
+        tableView.reloadData()
+        navigationController?.popToRootViewController(animated : true)
+    }
+    
+    func editBook(_ controller : AnyObject, editBook: Book){
+        if let row = tableView.indexPathForSelectedRow?.row {
+                    myBookStore.bookList[row] = editBook
+                }
+                
+                tableView.reloadData()
+                navigationController?.popToRootViewController(animated: true)
 
+        
+    }
 
+    
+    func deleteBook(_ controller : AnyObject){
+        if let row = tableView.indexPathForSelectedRow?.row {
+                    myBookStore.bookList.remove(at: row)
+                }
+                
+                tableView.reloadData()
+                navigationController?.popToRootViewController(animated: true)
+
+        
+    }
 }
 
